@@ -21,7 +21,7 @@ jobs:
       - run:
          name: echo world
          command:
-          echo world
+          echo $MY_NAME
 
 # Orchestrate or schedule a set of jobs
 workflows:
@@ -31,4 +31,6 @@ workflows:
     jobs:
       - welcome/run
       - print-hello
-      - print-world
+      - print-world :
+         requires :
+           - print-hello
