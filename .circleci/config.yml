@@ -9,9 +9,9 @@ jobs:
       - run:
          name: input 
          command:
-          echo "hello world" > output.txt
+          echo "hello world" > ~/output.txt
       - persist_to_workspace:
-          root: /tmp/workspace
+          root: ~/
           paths:
             - output.txt
 
@@ -20,11 +20,11 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - attach_workspace:
-          at: /tmp/workspace
+          at: ~/
       - run:
          name: echo output
          command:
-          cat output.txt
+          cat ~/output.txt
 
 # Orchestrate or schedule a set of jobs
 workflows:
