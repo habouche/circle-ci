@@ -2,23 +2,29 @@
 version: 2.1
 # Use a package of configuration called an orb.
 jobs:
-  print-hello:
+  save_hello_world_output:
     docker:
       - image: circleci/node:13.8.0
     steps:
       - run:
-         name: echo hello
+         name: input 
          command:
-          echo hello
+          echo "hello world" > output.txt
+      - persist_to_workspace:
+          root: /tmp/dir
+          paths:
+            - output.txt
 
-  print-world:
+  print_output_file:
     docker:
       - image: circleci/node:13.8.0
     steps:
+      - attach_workspace:
+          at: /tmp/dir
       - run:
-         name: echo world
+         name: echo output
          command:
-          echo $MY_NAME
+          cat output.txt
 
 # Orchestrate or schedule a set of jobs
 workflows:
@@ -26,7 +32,7 @@ workflows:
   welcome:
     # Run the welcome/run job in its own container
     jobs:
-      - print-hello
-      - print-world :
+      - save_hello_world_output
+      - print_output_file :
          requires :
-           - print-hello
+           - save_hello_world_output
