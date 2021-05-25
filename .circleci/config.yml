@@ -9,11 +9,20 @@ commands:
 
 # Use a package of configuration called an orb.
 jobs:
-  use_commands:
-     docker:
-       - image: circleci/node:13.8.0
-     steps:
-       - print_pipeline_id
+  cause_failure:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - run : return 1
+      - run :
+          name: handle error
+          command: echo "Hello Error"
+          when: on_fail
+  # use_commands:
+  #    docker:
+  #      - image: circleci/node:13.8.0
+  #    steps:
+  #      - print_pipeline_id
   # save_hello_world_output:
   #   docker:
   #     - image: circleci/node:13.8.0
@@ -44,7 +53,8 @@ workflows:
   welcome:
     # Run the welcome/run job in its own container
     jobs:
-      - use_commands
+      - cause_failure
+      # - use_commands
       # - save_hello_world_output
       # - print_output_file :
       #    requires :
