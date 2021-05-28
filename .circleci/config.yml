@@ -26,6 +26,16 @@ jobs:
         root: ~/
         paths:
              - inventory
+  print_output_file:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run:
+         name: echo output
+         command:
+          cat ~/inventory
 
     
   # cause_failure:
