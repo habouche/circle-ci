@@ -1,23 +1,42 @@
 # Use the latest 2.1 version of CircleCI pipeline process engine. See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
 
+orbs:
+  aws-cli: circleci/aws-cli@2.0.2
 commands:
-  print_pipeline_id:
-   description: "print workflow id"
+  public_ip_addresses:
+   description: "get the public ip addresses of EC2 instances"
    steps:
-     - run : echo $CIRCLE_WORKFLOW_ID
+     - run : aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:project,Values=udacity" --output text >> ~/inventory
 
 # Use a package of configuration called an orb.
 jobs:
-  cause_failure:
+
+  ansible_inventory:
     docker:
-      - image: circleci/node:13.8.0
+     - image: circleci/node:13.8.0
     steps:
-      - run : return 1
-      - run :
-          name: handle error
-          command: echo "Hello Error"
-          when: on_fail
+     - aws-cli/setup
+     - run:
+        name: create inventory file
+        command:
+           echo [all] > ~/inventory
+     - public_ip_addresses     
+     - persist_to_workspace:
+        root: ~/
+        paths:
+             - inventory
+
+    
+  # cause_failure:
+  #   docker:
+  #     - image: circleci/node:13.8.0
+  #   steps:
+  #     - run : return 1
+  #     - run :
+  #         name: handle error
+  #         command: echo "Hello Error"
+  #         when: on_fail
   # use_commands:
   #    docker:
   #      - image: circleci/node:13.8.0
@@ -53,7 +72,10 @@ workflows:
   welcome:
     # Run the welcome/run job in its own container
     jobs:
-      - cause_failure
+      - ansible_inventory:
+         context: udacity
+      
+      # - cause_failure
       # - use_commands
       # - save_hello_world_output
       # - print_output_file :
