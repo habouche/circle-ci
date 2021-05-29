@@ -15,13 +15,17 @@ orbs:
 # Use a package of configuration called an orb.
 jobs:
 
-  deploy_with_anible:
+  deploy_with_ansible:
     docker:
       - image: python:3.7-alpine3.11
     steps:
+       - checkout
        - add_ssh_keys:
           fingerprints:
             - "76:48:36:85:f6:60:cd:2a:b2:f9:ed:68:58:de:6c:0b"
+       - run :
+          name : install dependancies
+          command: apk add --update ansible    
        - run :
           name: run ansible playbook
           command: ansible-playbook main-remote.yml -i inventory 
@@ -106,7 +110,7 @@ workflows:
   welcome:
     # Run the welcome/run job in its own container
     jobs:
-      - deploy_with_anible
+      - deploy_with_ansible
       # - create_infrastructure:
       #    context: udacity
       # - ansible_inventory:
