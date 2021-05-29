@@ -3,15 +3,14 @@ version: 2.1
 
 orbs:
   aws-cli: circleci/aws-cli@2.0.2
-commands:
 #  -public_ip_addresses:
 #    description: "get the public ip addresses of EC2 instances"
 #    steps:
 #      - run : aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:project,Values=udacity" --output text >> ~/inventory
- -infrastructure:
-   description: "spin an AWS Infra"
-   steps:
-     - run : aws cloudformation create-stack --stack-name circle-ci --template-body file://template.yml --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" --region=us-east-1
+#  -infrastructure:
+#    description: "spin an AWS Infra"
+#    steps:
+#      - run : aws cloudformation create-stack --stack-name circle-ci --template-body file://template.yml --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" --region=us-east-1
 
 # Use a package of configuration called an orb.
 jobs:
@@ -19,7 +18,9 @@ jobs:
    docker:
      - image: amazon/aws-cli
    steps:
-    - infrastructure
+    - run:
+       name: aws create stack
+       command: aws cloudformation create-stack --stack-name circle-ci --template-body file://template.yml --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" --region=us-east-1  
 
    
   # ansible_inventory:
