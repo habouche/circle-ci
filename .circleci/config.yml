@@ -4,38 +4,48 @@ version: 2.1
 orbs:
   aws-cli: circleci/aws-cli@2.0.2
 commands:
-  public_ip_addresses:
+ -public_ip_addresses:
    description: "get the public ip addresses of EC2 instances"
    steps:
      - run : aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:project,Values=udacity" --output text >> ~/inventory
+ -infrastructure:
+   description: "spin an AWS Infra"
+   steps:
+     - run : aws cloudformation create-stack --stack-name circle-ci --template-body file://template.yml --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" --region=us-east-1
 
 # Use a package of configuration called an orb.
 jobs:
+  create_infrastructure:
+   docker:
+     - image: amazon/aws-cli
+   steps:
+    - infrastructure
 
-  ansible_inventory:
-    docker:
-     - image: circleci/node:13.8.0
-    steps:
-     - aws-cli/setup
-     - run:
-        name: create inventory file
-        command:
-           echo [all] > ~/inventory
-     - public_ip_addresses     
-     - persist_to_workspace:
-        root: ~/
-        paths:
-             - inventory
-  print_output_file:
-    docker:
-      - image: circleci/node:13.8.0
-    steps:
-      - attach_workspace:
-          at: ~/
-      - run:
-         name: echo output
-         command:
-          cat ~/inventory
+   
+  # ansible_inventory:
+  #   docker: 
+  #    - image: circleci/node:13.8.0
+  #   steps:
+  #    - aws-cli/setup
+  #    - run:
+  #       name: create inventory file
+  #       command:
+  #          echo [all] > ~/inventory
+  #    - public_ip_addresses     
+  #    - persist_to_workspace:
+  #       root: ~/
+  #       paths:
+  #            - inventory
+  # print_output_file:
+  #   docker:
+  #     - image: circleci/node:13.8.0
+  #   steps:
+  #     - attach_workspace:
+  #         at: ~/
+  #     - run:
+  #        name: echo output
+  #        command:
+  #         cat ~/inventory
 
     
   # cause_failure:
@@ -82,11 +92,13 @@ workflows:
   welcome:
     # Run the welcome/run job in its own container
     jobs:
-      - ansible_inventory:
+      - create_infrastructure:
          context: udacity
-      - print_output_file:
-         requires:
-           - ansible_inventory
+      # - ansible_inventory:
+      #    context: udacity
+      # - print_output_file:
+      #    requires:
+      #      - ansible_inventory
       
       # - cause_failure
       # - use_commands
