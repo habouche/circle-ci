@@ -14,15 +14,26 @@ orbs:
 
 # Use a package of configuration called an orb.
 jobs:
-  create_infrastructure:
-   docker:
-     - image: amazon/aws-cli
-   steps:
-    - checkout
-    - run:
-       name: aws create stack
-       command : aws cloudformation create-stack --stack-name circle-ci --template-body file://networkinfra.yml --parameters file://networkinfra-params.json --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" --region=us-east-1
-      #  command: aws cloudformation deploy --template-file template.yml  --stack-name my-stack
+
+  deploy_with_anible:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+       - add_ssh_keys:
+          fingerprints:
+            - "76:48:36:85:f6:60:cd:2a:b2:f9:ed:68:58:de:6c:0b"
+       - run :
+          name: run ansible playbook
+          command: ansible-playbook main-remote.yml -i inventory 
+  # create_infrastructure:
+  #  docker:
+  #    - image: amazon/aws-cli
+  #  steps:
+  #   - checkout
+  #   - run:
+  #      name: aws create stack
+  #      command : aws cloudformation create-stack --stack-name circle-ci --template-body file://networkinfra.yml --parameters file://networkinfra-params.json --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" --region=us-east-1
+  #     #  command: aws cloudformation deploy --template-file template.yml  --stack-name my-stack
 
    
   # ansible_inventory:
@@ -95,8 +106,9 @@ workflows:
   welcome:
     # Run the welcome/run job in its own container
     jobs:
-      - create_infrastructure:
-         context: udacity
+      - deploy_with_anible
+      # - create_infrastructure:
+      #    context: udacity
       # - ansible_inventory:
       #    context: udacity
       # - print_output_file:
