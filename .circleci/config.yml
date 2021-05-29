@@ -23,6 +23,7 @@ jobs:
        - add_ssh_keys:
           fingerprints:
             - "76:48:36:85:f6:60:cd:2a:b2:f9:ed:68:58:de:6c:0b"
+       - run : ssh-keyscan 54.160.89.217 >> ~/.ssh/known_hosts    
        - run :
           name : install dependancies
           command: apk add --update ansible    
