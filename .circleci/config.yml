@@ -7,7 +7,9 @@ commands:
   destroy_environment:
     description: destroy aws stack
     steps:
-      - run: aws cloudformation delete-stack --stack-name my-stack
+      - run:
+         name: destroy aws environment
+         command : aws cloudformation delete-stack --stack-name my-stack
 #  -public_ip_addresses:
 #    description: "get the public ip addresses of EC2 instances"
 #    steps:
@@ -31,8 +33,10 @@ jobs:
     - run :
        name: cause failure
        command: return 1
-    - destroy_environment
-      when: on_fail
+    - run:
+       name: rollback
+       command: aws cloudformation delete-stack --stack-name my-stack
+       when: on_fail
   # smoke_test:
   #   docker:
   #     - image: alpine:latest
