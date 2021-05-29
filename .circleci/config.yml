@@ -4,7 +4,7 @@ version: 2.1
 orbs:
   aws-cli: circleci/aws-cli@2.0.2
 commands:
-  destroy_environments:
+  destroy_environment:
     description: destroy aws stack
     steps:
       - run: aws cloudformation delete-stack --stack-name my-stack
@@ -19,6 +19,20 @@ commands:
 
 # Use a package of configuration called an orb.
 jobs:
+  create_infrastructure:
+   docker:
+     - image: amazon/aws-cli
+   steps:
+    - checkout
+    - run:
+       name: aws create stack
+       command : aws cloudformation create-stack --stack-name my-stack --template-body file://networkinfra.yml --parameters file://networkinfra-params.json --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" --region=us-east-1
+      #  command: aws cloudformation deploy --template-file template.yml  --stack-name my-stack
+    - run :
+       name: cause failure
+       command: return 1
+    - destroy_environment
+      when: on_fail
   # smoke_test:
   #   docker:
   #     - image: alpine:latest
@@ -49,19 +63,8 @@ jobs:
   #      - run :
   #         name: run ansible playbook
   #         command: ansible-playbook main-remote.yml -i inventory 
-  create_infrastructure:
-   docker:
-     - image: amazon/aws-cli
-   steps:
-    - checkout
-    - run:
-       name: aws create stack
-       command : aws cloudformation create-stack --stack-name my-stack --template-body file://networkinfra.yml --parameters file://networkinfra-params.json --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" --region=us-east-1
-      #  command: aws cloudformation deploy --template-file template.yml  --stack-name my-stack
-    - run : return 1
-    - destroy_environments:
-       when: on_fail
-   
+  
+
   # ansible_inventory:
   #   docker: 
   #    - image: circleci/node:13.8.0
