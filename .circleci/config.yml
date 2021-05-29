@@ -14,23 +14,30 @@ orbs:
 
 # Use a package of configuration called an orb.
 jobs:
-
-  deploy_with_ansible:
+  smoke_test:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: alpine:latest
     steps:
-       - checkout
-       - add_ssh_keys:
-          fingerprints:
-            - "76:48:36:85:f6:60:cd:2a:b2:f9:ed:68:58:de:6c:0b"
-       - run : cat ~/.ssh/known_hosts     
-       - run :
-          name : install dependancies
-          command: apk add --update ansible    
-       - run :
-          name: run ansible playbook
-          command: ansible-playbook main-remote.yml -i inventory 
-  # create_infrastructure:
+      - run :
+         name: test a website responsivness
+         command: curl -s --head "http:googlee.com"
+
+  # deploy_with_ansible:
+  #   docker:
+  #     - image: python:3.7-alpine3.11
+  #   steps:
+  #      - checkout
+  #      - add_ssh_keys:
+  #         fingerprints:
+  #           - "76:48:36:85:f6:60:cd:2a:b2:f9:ed:68:58:de:6c:0b"
+  #      - run : cat ~/.ssh/known_hosts     
+  #      - run :
+  #         name : install dependancies
+  #         command: apk add --update ansible    
+  #      - run :
+  #         name: run ansible playbook
+  #         command: ansible-playbook main-remote.yml -i inventory 
+  # # create_infrastructure:
   #  docker:
   #    - image: amazon/aws-cli
   #  steps:
@@ -111,7 +118,8 @@ workflows:
   welcome:
     # Run the welcome/run job in its own container
     jobs:
-      - deploy_with_ansible
+      - smoke_test
+      # - deploy_with_ansible
       # - create_infrastructure:
       #    context: udacity
       # - ansible_inventory:
