@@ -18,10 +18,17 @@ jobs:
     docker:
       - image: alpine:latest
     steps:
-      - run :
-         name: test a website responsivness
-         command: curl -s --head "http://googlee.com"
-
+      - run: apk add --update curl
+      - run:
+          name: smoke test.
+          command: |
+            URL="https://blog.udacity.com/"
+            if curl -s --head ${URL} # test if blog.udacity. com exists
+            then
+            return 0
+            else
+            return 1
+            fi
   # deploy_with_ansible:
   #   docker:
   #     - image: python:3.7-alpine3.11
