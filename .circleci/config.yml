@@ -20,7 +20,7 @@ jobs:
    steps:
     - run:
        name: aws create stack
-       command: aws cloudformation create-stack --stack-name circle-ci --template-body file://template.yml --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" --region=us-east-1  
+       command: aws cloudformation create-stack --stack-name circle-ci --template-body file://./template.yml --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" --region=us-east-1  
 
    
   # ansible_inventory:
