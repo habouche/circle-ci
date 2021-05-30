@@ -55,7 +55,7 @@ jobs:
         - checkout
         - run : 
             name: create new cloudFront
-            command: aws cloudformation deploy --template-file cloudfront.yml --stack-name cloudfront2 --parameter-overrides PipelineID="${PIPELINE_ID}"
+            command: aws cloudformation deploy --template-file cloudfront.yml --stack-name cloudfront2 --parameter-overrides PipelineID="fernewbucket"
   
   clean_up_old_front_end:
     docker:
@@ -63,7 +63,10 @@ jobs:
     steps:
       - run:
          name: delete old S3 bucket
-         command: aws s3 rm "s3://my-udacity-circle-ci" --recursive 
+         command: aws s3 rm "s3://my-udacity-circle-ci" --recursive
+      - run:
+         name: delete old prod stack
+         command: aws cloudformation delete-stack --stack-name "production-distro"    
   # create_infrastructure:
   #  docker:
   #    - image: amazon/aws-cli
