@@ -33,10 +33,10 @@ jobs:
          command: |
           aws cloudformation deploy \
               --template-file bucket.yml \
-              --stack-name "${PIPELINE_ID}" \
-              --parameter-overrides NAME="${PIPELINE_ID}"
-      - run: aws s3 sync . s3://"${PIPELINE_ID}" 
-      
+              --stack-name "newbucket" \
+              --parameter-overrides NAME="newbucket"
+      - run: aws s3 sync . s3://"newbucket" 
+
   # get_last_deployment_id:
   #   docker:
   #     - image: amazon/aws-cli
