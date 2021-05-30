@@ -33,9 +33,9 @@ jobs:
          command: |
           aws cloudformation deploy \
               --template-file bucket.yml \
-              --stack-name "newbucket" \
-              --parameter-overrides NAME="newbucket"
-      - run: aws s3 sync . s3://"newbucket" 
+              --stack-name "fernewbucket" \
+              --parameter-overrides NAME="fernewbucket"
+      - run: aws s3 sync . s3://"fernewbucket" 
 
   # get_last_deployment_id:
   #   docker:
