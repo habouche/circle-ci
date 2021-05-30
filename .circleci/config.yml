@@ -35,7 +35,7 @@ jobs:
               --template-file bucket.yml \
               --stack-name "${PIPELINE_ID}" \
               --parameter-overrides NAME="${PIPELINE_ID}"
-      - run: aws s3 sync . s3://"${PIPELINE_ID}" --delete
+      - run: aws s3 sync . s3://"${PIPELINE_ID}" 
       
   # get_last_deployment_id:
   #   docker:
@@ -55,7 +55,7 @@ jobs:
         - checkout
         - run : 
             name: create new cloudFront
-            command: aws cloudformation deploy --template-file cloudfront.yml --stack-name cloudfront --parameter-overrides PipelineID="${PIPELINE_ID}"
+            command: aws cloudformation deploy --template-file cloudfront.yml --stack-name cloudfront2 --parameter-overrides PipelineID="${PIPELINE_ID}"
   
   clean_up_old_front_end:
     docker:
