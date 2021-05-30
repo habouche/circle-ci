@@ -55,7 +55,7 @@ jobs:
         - checkout
         - run : 
             name: create new cloudFront
-            command: aws cloudformation deploy --template-file cloudfront.yml --stack-name cloudfront2 --parameter-overrides PipelineID="${PIPELINE_ID}"
+            command: aws cloudformation deploy --template-file cloudfront.yml --stack-name cloudfront2 --parameter-overrides PipelineID="fernewbucket"
   
   clean_up_old_front_end:
     docker:
