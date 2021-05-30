@@ -5,7 +5,7 @@ Resources:
   WebsiteBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub "${NAME}"
+      BucketName: !Sub ${NAME}
       AccessControl: PublicRead
       WebsiteConfiguration:
         IndexDocument: index.html
@@ -13,7 +13,7 @@ Resources:
   WebsiteBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
-      Bucket: !Ref "WebsiteBucket"
+      Bucket: !Ref WebsiteBucket
       PolicyDocument:
         Statement:
           - Sid: PublicReadForGetBucketObjects
